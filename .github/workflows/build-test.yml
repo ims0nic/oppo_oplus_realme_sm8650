@@ -1,4 +1,4 @@
-name: Test 欧加真 Android 15 通用OKI内核
+name: 欧加真 6.1.118 A15 sonic 通用OKI内核
 
 env:
   TZ: Asia/Shanghai
@@ -6,9 +6,9 @@ env:
   FEIL: 'oppo+oplus+realme'
   ANDROID_VERSION: 'android14'
   KERNEL_VERSION: '6.1'
-  KERNEL_NAME: 'android14-11-o-gca13bffobf09'
+  KERNEL_NAME: 's0n1c'
   KERNELSU_VARIANT: 'SukiSU-Ultra'
-  KERNELSU_BRANCH: 'susfs-dev'
+  KERNELSU_BRANCH: 'susfs-main'
 
 on:
   workflow_dispatch:
@@ -16,7 +16,7 @@ on:
 #  schedule:
 #    - cron: '0 23 * * *'  # UTC时间23点（北京时间次日7点）
     inputs:
-      lz4k_enable:
+      _enable:
         description: '是否安装 LZ4K 补丁'
         required: true
         type: choice
@@ -25,10 +25,10 @@ on:
           - 'true'
           - 'false'
       scx_enable:
-        description: '是否安装风驰内核驱动'
+        description: '是否安装风驰内核驱动(未完成)'
         required: true
         type: choice
-        default: 'true'
+        default: 'false'
         options:
           - 'true'
           - 'false'
@@ -68,7 +68,7 @@ jobs:
         run: |
           rm -rf kernel_workspace && mkdir kernel_workspace && cd kernel_workspace
           echo "正在克隆源码仓库..."
-          git clone --depth=1 https://github.com/cctv18/android_kernel_common_oneplus_sm8650 -b oneplus/sm8650_v_15.0.0_oneplus12 common
+          git clone --depth=1 https://github.com/cctv18/android_kernel_common_oneplus_sm8650 -b oneplus/sm8650_v_15.0.0_oneplus12_6.1.118 common
           echo "正在去除 ABI 保护 & 去除 dirty 后缀..."
           rm common/android/abi_gki_protected_exports_* || true
           for f in common/scripts/setlocalversion; do
@@ -81,9 +81,9 @@ jobs:
         run: |
           cd kernel_workspace
           #if [[ "${{ env.KERNELSU_VARIANT }}" == "SukiSU-Ultra" ]]; then
-          #  echo "BRANCH='-s susfs-dev'" >> $GITHUB_ENV
+          #  echo "BRANCH='-s susfs-main'" >> $GITHUB_ENV
           #fi
-          curl -LSs "https://raw.githubusercontent.com/ShirkNeko/SukiSU-Ultra/refs/heads/main/kernel/setup.sh" | bash -s susfs-dev
+          curl -LSs "https://raw.githubusercontent.com/ShirkNeko/SukiSU-Ultra/refs/heads/main/kernel/setup.sh" | bash -s susfs-main
           cd ./KernelSU
           KSU_VERSION=$(expr $(/usr/bin/git rev-list --count main) "+" 10606)
           echo "KSUVER=$KSU_VERSION" >> $GITHUB_ENV
@@ -183,7 +183,7 @@ jobs:
             cp -r ./sched_ext/* ./common/kernel/sched
           fi
           cd common
-          make -flto -O -j$(nproc --all) LLVM=-20 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnuabeihf- CC=clang LD=ld.lld HOSTCC=clang HOSTLD=ld.lld O=out KCFLAGS+=-Wno-error gki_defconfig all
+          make -j$(nproc --all) LLVM=-20 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnuabeihf- CC=clang LD=ld.lld HOSTCC=clang HOSTLD=ld.lld O=out KCFLAGS+=-Wno-error gki_defconfig all
           echo "内核编译完成！"
          
       - name: 应用patch_linux并修补内核
@@ -266,7 +266,7 @@ jobs:
             - 编译时间: ${{ env.TIME_FORM }}
             - 机型：欧加真骁龙8Gen3 6.1 Android 15内核通用（基于一加12 Android 15 版官方OKI源码）
             - 特性：SukiSU Ultra + SUSFS + VFS + KPM
-            - LZ4K支持：${{ github.event.inputs.lz4k_enable }}
+            - 支持：${{ github.event.inputs._enable }}
             - 风驰内核支持：${{ github.event.inputs.scx_enable }}
             - 推荐系统：ColorOS 15 / RealmeUI 6.0
             - SukiSU管理器下载：[SukiSU-Ultra](https://github.com/ShirkNeko/SukiSU-Ultra/releases)
