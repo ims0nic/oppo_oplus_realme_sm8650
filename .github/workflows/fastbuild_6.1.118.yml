@@ -292,7 +292,7 @@ jobs:
             cd ./common
             patch -p1 < 50_add_susfs_in_gki-${{ env.ANDROID_VERSION }}-${{ env.KERNEL_VERSION }}.patch || true
             patch -p1 -N -F 3 < scope_min_manual_hooks_v1.5.patch || true
-            patch -p1 -N -F 3 < 69_hide_stuff.patch || true
+            #patch -p1 -N -F 3 < 69_hide_stuff.patch || true
             #为KernelSU Next添加WildKSU管理器支持
             cd ./drivers/kernelsu
             wget https://github.com/WildKernels/kernel_patches/raw/refs/heads/main/next/susfs_fix_patches/v1.5.12/fix_apk_sign.c.patch
@@ -332,7 +332,7 @@ jobs:
             patch -p1 < fix_umount.patch || true
             cd ../common
             patch -p1 < 50_add_susfs_in_gki-${{ env.ANDROID_VERSION }}-${{ env.KERNEL_VERSION }}.patch || true
-            patch -p1 -N -F 3 < 69_hide_stuff.patch || true
+            #patch -p1 -N -F 3 < 69_hide_stuff.patch || true
           else
             echo "正在为原版 KernelSU (tiann/KernelSU)添加补丁..."
             git clone https://gitlab.com/simonpunk/susfs4ksu.git -b gki-${{ env.ANDROID_VERSION }}-${{ env.KERNEL_VERSION }}
@@ -365,7 +365,7 @@ jobs:
             patch -p1 < fix_umount.patch || true
             cd ../common
             patch -p1 < 50_add_susfs_in_gki-${{ env.ANDROID_VERSION }}-${{ env.KERNEL_VERSION }}.patch || true
-            patch -p1 -N -F 3 < 69_hide_stuff.patch || true
+            #patch -p1 -N -F 3 < 69_hide_stuff.patch || true
           fi
           
       - name: 应用lz4 1.10.0 & zstd 1.5.7补丁
