@@ -391,6 +391,10 @@ jobs:
           cd common
           wget https://github.com/$GITHUB_REPOSITORY/raw/refs/heads/$GITHUB_REF_NAME/other_patch/cve-2026-43499-rtmutex-6.1.patch
           patch -p1 -F 3 < cve-2026-43499-rtmutex-6.1.patch
+
+          ## BBR3
+          wget https://github.com/WildKernels/kernel_patches/tree/main/common/bbrv3/0001-net-tcp-backport-BBRv3-to-android14-6.1.patch
+          patch -p1 -F 3 < 0001-net-tcp-backport-BBRv3-to-android14-6.1.patch
           
       - name: 启用网络功能增强优化配置
         if: inputs.better_net
@@ -434,6 +438,12 @@ jobs:
             echo "正在添加BBR等拥塞控制算法..."
             cd kernel_workspace
             #开启TCP拥塞控制算法控制器（必需）
+            
+            ## BBR3
+            echo CONFIG_NET_SCH_FQ=y" >> ./common/arch/arm64/configs/gki_defconfig
+            echo CONFIG_NET_SCH_FQ_CODEL=y" >> ./common/arch/arm64/configs/gki_defconfig
+            echo CONFIG_TCP_CONG_BBR3=y" >> ./common/arch/arm64/configs/gki_defconfig
+            
             echo "CONFIG_TCP_CONG_ADVANCED=y" >> ./common/arch/arm64/configs/gki_defconfig
             ################################################################################################################################
             # BBR：基于链路容量的代表拥塞控制算法，不再使用丢包、延时等信号去衡量拥塞是否发生，而是直接对网络建模来应对、避免真实的网络拥塞；
