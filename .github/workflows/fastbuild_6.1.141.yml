@@ -393,7 +393,7 @@ jobs:
           patch -p1 -F 3 < cve-2026-43499-rtmutex-6.1.patch
 
           ## BBR3
-          wget https://github.com/WildKernels/kernel_patches/blob/main/common/bbrv3/0001-net-tcp-backport-BBRv3-to-android14-6.1.patch
+          wget https://github.com/$GITHUB_REPOSITORY/raw/refs/heads/$GITHUB_REF_NAME/other_patch/0001-net-tcp-backport-BBRv3-to-android14-6.1.patch
           patch -p1 -F 3 < 0001-net-tcp-backport-BBRv3-to-android14-6.1.patch
           
       - name: 启用网络功能增强优化配置
